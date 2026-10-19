@@ -7,7 +7,12 @@ public class TreasureManager : MonoBehaviour
     public TextMeshProUGUI counterText;
 
     private int collected = 0;
-    private int total = 5;
+    private int total = 12;
+
+    public bool AllTreasuresCollected()
+    {
+        return collected >= total;
+    }
 
     void Start()
     {
