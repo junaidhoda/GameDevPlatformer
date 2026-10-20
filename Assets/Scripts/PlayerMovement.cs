@@ -47,4 +47,10 @@ public class PlayerMovement : MonoBehaviour
 
         controller.Move(movement * Time.deltaTime);
     }
+
+    // Used by jump pads (launch upwards) and respawning / air dash (pass 0 to stop falling)
+    public void Launch(float upwardSpeed)
+    {
+        verticalSpeed = upwardSpeed;
+    }
 }

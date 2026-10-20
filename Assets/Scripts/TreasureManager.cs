@@ -16,6 +16,10 @@ public class TreasureManager : MonoBehaviour
 
     void Start()
     {
+        // Count every treasure in the scene, so adding levels updates the total
+        int found = FindObjectsByType<TreasurePickup>(FindObjectsSortMode.None).Length;
+        if (found > 0) total = found;
+
         UpdateCounter();
     }
 
