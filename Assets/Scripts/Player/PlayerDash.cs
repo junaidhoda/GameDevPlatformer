@@ -58,16 +58,20 @@ public class PlayerDash : MonoBehaviour
         }
     }
 
+    // Use PlayerMovement's grounded state; controller.isGrounded is unreliable
+    // while a moving platform is carrying the player.
+    private bool Grounded => movement != null ? movement.IsGrounded : controller.isGrounded;
+
     void Update()
     {
         Vector3 input = ReadMoveInput();
         if (input.sqrMagnitude > 0.01f) lastMoveDirection = input;
 
-        if (controller.isGrounded) airDashUsed = false;
+        if (Grounded) airDashUsed = false;
 
         bool canDash = !IsDashing
             && Time.time >= nextDashTime
-            && (controller.isGrounded || !airDashUsed);
+            && (Grounded || !airDashUsed);
 
         if (canDash && DashPressed()) StartDash();
 
@@ -87,7 +91,7 @@ public class PlayerDash : MonoBehaviour
         dashEndTime = Time.time + dashDuration;
         nextDashTime = Time.time + dashCooldown;
 
-        if (!controller.isGrounded)
+        if (!Grounded)
         {
             airDashUsed = true;
             // Stop falling for a moment so an air dash can cross gaps
