@@ -61,11 +61,11 @@ public class BubbleFloat : MonoBehaviour
         Vector2 position = bubble.anchoredPosition;
 
         // Move upwards
-        position.y += speed * Time.deltaTime;
+        position.y += speed * Time.unscaledDeltaTime; // keeps moving while paused
 
         // Gently sway from side to side
         float sway = Mathf.Sin(
-            Time.time * swaySpeed * Mathf.PI * 2f
+            Time.unscaledTime * swaySpeed * Mathf.PI * 2f
             + randomOffset
         ) * swayAmount;
 

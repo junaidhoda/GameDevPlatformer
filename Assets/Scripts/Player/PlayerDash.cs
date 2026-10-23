@@ -64,6 +64,8 @@ public class PlayerDash : MonoBehaviour
 
     void Update()
     {
+        if (Time.timeScale == 0f) return; // paused / menu open
+
         Vector3 input = ReadMoveInput();
         if (input.sqrMagnitude > 0.01f) lastMoveDirection = input;
 

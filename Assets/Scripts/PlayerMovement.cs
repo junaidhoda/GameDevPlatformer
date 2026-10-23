@@ -28,6 +28,8 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
+        if (Time.timeScale == 0f) return; // paused / menu open
+
         Vector2 input = Vector2.zero;
 
         if (Keyboard.current != null)

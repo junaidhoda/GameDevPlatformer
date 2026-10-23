@@ -230,7 +230,8 @@ public static class Level1Builder
         Post(section, "BridgeTrapPostC", 0f, 156f, 2f, 3.4f);
         AddArrowTrap(section, "BridgeTrapC", new Vector3(0f, 5.7f, 156f), -90f, 2.1f, 1.4f);
 
-        Platform(section, "Goal", -4f, 163f, 4.8f, 6f, 6f, goalMat);
+        GameObject goal = Platform(section, "Goal", -4f, 163f, 4.8f, 6f, 6f, goalMat);
+        Undo.AddComponent<LevelGoal>(goal);
         Respawn(section, "Respawn_Goal", -4f, 163f, 4.8f, 6f, 6f);
         Treasure(section, -4f, 164f, 4.8f);
         Sign(section, "END OF LEVEL 1", new Vector3(-4f, 8f, 166f), 0.2f);

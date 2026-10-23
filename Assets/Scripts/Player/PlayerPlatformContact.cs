@@ -1,7 +1,8 @@
 using UnityEngine;
 
 // Lets the player interact with special platforms they land on:
-// breaking platforms start to crumble, jump pads launch, moving platforms carry.
+// breaking platforms start to crumble, jump pads launch, moving platforms carry,
+// and the level goal opens the Level Complete menu.
 [RequireComponent(typeof(CharacterController))]
 public class PlayerPlatformContact : MonoBehaviour
 {
@@ -24,6 +25,9 @@ public class PlayerPlatformContact : MonoBehaviour
 
         JumpPad pad = hit.collider.GetComponentInParent<JumpPad>();
         if (pad != null) pad.Launch(gameObject);
+
+        LevelGoal goal = hit.collider.GetComponentInParent<LevelGoal>();
+        if (goal != null) goal.Reach();
 
         MovingPlatform mover = hit.collider.GetComponentInParent<MovingPlatform>();
         if (mover != null)
