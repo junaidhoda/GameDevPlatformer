@@ -12,25 +12,50 @@ public class ArrowTrap : MonoBehaviour
     public float activationRange = 30f;
     public GameObject arrowPrefab;
 
+    [Header("Warning")]
+    [Tooltip("The nozzle glows for this long before each shot")]
+    public float warningTime = 0.4f;
+    public Color warningColour = new Color(1f, 0.85f, 0.2f);
+
     private Transform player;
     private float nextFire;
+    private Renderer nozzle;
+    private Color nozzleColour;
 
     void Start()
     {
         PlayerHealth health = FindFirstObjectByType<PlayerHealth>();
         if (health != null) player = health.transform;
 
+        Transform nozzlePart = transform.Find("Nozzle");
+        if (nozzlePart != null)
+        {
+            nozzle = nozzlePart.GetComponent<Renderer>();
+            if (nozzle != null) nozzleColour = nozzle.material.color;
+        }
+
         nextFire = Time.time + startDelay;
+    }
+
+    bool PlayerInRange()
+    {
+        return player == null ||
+            Vector3.Distance(player.position, transform.position) <= activationRange;
     }
 
     void Update()
     {
+        // Glow just before firing so the player can time their run
+        if (nozzle != null)
+        {
+            bool warn = nextFire - Time.time < warningTime && PlayerInRange();
+            nozzle.material.color = warn ? warningColour : nozzleColour;
+        }
+
         if (Time.time < nextFire) return;
         nextFire = Time.time + fireInterval;
 
-        if (player != null &&
-            Vector3.Distance(player.position, transform.position) > activationRange)
-            return;
+        if (!PlayerInRange()) return;
 
         Fire();
     }

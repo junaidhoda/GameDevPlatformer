@@ -3,7 +3,7 @@ using UnityEngine.InputSystem;
 
 // Quick burst of movement on the ground or in the air (Q or right mouse button).
 // While dashing the player can't be hurt, and anything dangerous in the way
-// (pufferfish, sea mines, barrels, arrows) is destroyed.
+// (pufferfish, chargers, jellyfish, spitters, sea mines, arrows, bubbles) is destroyed.
 [RequireComponent(typeof(CharacterController))]
 public class PlayerDash : MonoBehaviour
 {
@@ -122,14 +122,32 @@ public class PlayerDash : MonoBehaviour
         {
             if (hit.transform.IsChildOf(transform)) continue;
 
+            DashKillable enemy = hit.GetComponentInParent<DashKillable>();
+            if (enemy != null) { enemy.Kill(); continue; }
+
             PufferfishAI fish = hit.GetComponentInParent<PufferfishAI>();
-            if (fish != null) { Destroy(fish.gameObject); continue; }
+            if (fish != null)
+            {
+                DashKillable.Pop(fish.transform.position, new Color(1f, 0.85f, 0.4f));
+                Destroy(fish.gameObject);
+                continue;
+            }
 
             SeaMineDamage mine = hit.GetComponentInParent<SeaMineDamage>();
-            if (mine != null) { Destroy(mine.gameObject); continue; }
+            if (mine != null)
+            {
+                DashKillable.Pop(mine.transform.position, new Color(1f, 0.5f, 0.3f));
+                Destroy(mine.gameObject);
+                continue;
+            }
 
             ArrowProjectile arrow = hit.GetComponentInParent<ArrowProjectile>();
-            if (arrow != null) { Destroy(arrow.gameObject); continue; }
+            if (arrow != null)
+            {
+                DashKillable.Pop(arrow.transform.position, new Color(0.8f, 0.95f, 1f));
+                Destroy(arrow.gameObject);
+                continue;
+            }
         }
     }
 

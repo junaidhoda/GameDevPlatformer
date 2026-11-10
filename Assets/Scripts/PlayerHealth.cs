@@ -1,4 +1,5 @@
 
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -11,8 +12,16 @@ public class PlayerHealth : MonoBehaviour
     public Slider healthBar;
     public TextMeshProUGUI healthText;
 
+    [Tooltip("After a hit, the player can't be hurt again for this long")]
+    public float hitSafeTime = 0.6f;
+    public Color hitColour = new Color(1f, 0.25f, 0.25f);
+
+    private float lastHitTime = -999f;
+    private Renderer bodyRenderer;
+
     void Start()
     {
+        bodyRenderer = GetComponent<Renderer>();
         currentHealth = maxHealth;
         healthBar.maxValue = maxHealth;
 
@@ -24,6 +33,12 @@ public class PlayerHealth : MonoBehaviour
         // No damage while dashing
         PlayerDash dash = GetComponent<PlayerDash>();
         if (dash != null && dash.IsInvulnerable) return;
+
+        // Stops two things hitting at once from taking a huge chunk of health
+        if (Time.time - lastHitTime < hitSafeTime) return;
+        lastHitTime = Time.time;
+
+        if (bodyRenderer != null && currentHealth > 0) StartCoroutine(HitFlash());
 
         currentHealth = Mathf.Max(currentHealth - damage, 0);
 
@@ -43,6 +58,18 @@ public class PlayerHealth : MonoBehaviour
 
         currentHealth = Mathf.Min(currentHealth + amount, maxHealth);
         UpdateHealthUI();
+    }
+
+    IEnumerator HitFlash()
+    {
+        Color before = bodyRenderer.material.color;
+        for (int i = 0; i < 3; i++)
+        {
+            bodyRenderer.material.color = hitColour;
+            yield return new WaitForSeconds(0.08f);
+            bodyRenderer.material.color = before;
+            yield return new WaitForSeconds(0.08f);
+        }
     }
 
     void UpdateHealthUI()
