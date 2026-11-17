@@ -21,6 +21,17 @@ public class PlayerMovement : MonoBehaviour
     // call controller.Move afterwards and overwrite it.
     public bool IsGrounded { get; private set; }
 
+    // Slippery platforms (SlipperyPlatform): speed changes slowly so you slide
+    private Vector3 horizontalVelocity;
+    private int slipperyFrame = -10;
+    private float slipperyGrip = 5f;
+
+    // Sticky trash (StickyTrash): slower and lower jumps for a while
+    private float slowUntil;
+    private float slowMoveMultiplier = 1f;
+    private float slowJumpMultiplier = 1f;
+    public bool IsSlowed => Time.time < slowUntil;
+
     void Start()
     {
         controller = GetComponent<CharacterController>();
@@ -51,13 +62,23 @@ public class PlayerMovement : MonoBehaviour
             Keyboard.current.spaceKey.wasPressedThisFrame &&
             canJump)
         {
-            verticalSpeed = Mathf.Sqrt(jumpHeight * -2f * gravity);
+            float jumpScale = IsSlowed ? slowJumpMultiplier : 1f;
+            verticalSpeed = Mathf.Sqrt(jumpHeight * jumpScale * -2f * gravity);
             lastGroundedTime = -999f; // prevent a double jump within the grace window
         }
 
         verticalSpeed += gravity * Time.deltaTime;
 
-        movement = movement * moveSpeed;
+        float speedScale = IsSlowed ? slowMoveMultiplier : 1f;
+        Vector3 targetVelocity = movement * moveSpeed * speedScale;
+
+        bool onSlipperyGround = Time.frameCount - slipperyFrame <= 2;
+        if (onSlipperyGround)
+            horizontalVelocity = Vector3.MoveTowards(horizontalVelocity, targetVelocity, slipperyGrip * Time.deltaTime);
+        else
+            horizontalVelocity = targetVelocity;
+
+        movement = horizontalVelocity;
         movement.y = verticalSpeed;
 
         CollisionFlags flags = controller.Move(movement * Time.deltaTime);
@@ -70,5 +91,20 @@ public class PlayerMovement : MonoBehaviour
     public void Launch(float upwardSpeed)
     {
         verticalSpeed = upwardSpeed;
+    }
+
+    // Called by PlayerPlatformContact every frame the player stands on a slippery platform
+    public void SetOnSlipperyGround(float grip)
+    {
+        slipperyFrame = Time.frameCount;
+        slipperyGrip = grip;
+    }
+
+    // Used by sticky trash: multiply speed and jump height for a few seconds
+    public void ApplySlow(float moveMultiplier, float jumpMultiplier, float duration)
+    {
+        slowMoveMultiplier = moveMultiplier;
+        slowJumpMultiplier = jumpMultiplier;
+        slowUntil = Mathf.Max(slowUntil, Time.time + duration);
     }
 }

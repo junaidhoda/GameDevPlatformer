@@ -3,7 +3,7 @@ using UnityEngine.InputSystem;
 
 // Quick burst of movement on the ground or in the air (Q or right mouse button).
 // While dashing the player can't be hurt, and anything dangerous in the way
-// (pufferfish, chargers, jellyfish, spitters, sea mines, arrows, bubbles) is destroyed.
+// (pufferfish, chargers, jellyfish, spitters, exploding fish, sea mines, arrows, bubbles) is destroyed.
 [RequireComponent(typeof(CharacterController))]
 public class PlayerDash : MonoBehaviour
 {
@@ -146,6 +146,14 @@ public class PlayerDash : MonoBehaviour
             {
                 DashKillable.Pop(arrow.transform.position, new Color(0.8f, 0.95f, 1f));
                 Destroy(arrow.gameObject);
+                continue;
+            }
+
+            ExplodingFish boomFish = hit.GetComponentInParent<ExplodingFish>();
+            if (boomFish != null)
+            {
+                DashKillable.Pop(boomFish.transform.position, new Color(1f, 0.55f, 0.15f));
+                Destroy(boomFish.gameObject);
                 continue;
             }
         }

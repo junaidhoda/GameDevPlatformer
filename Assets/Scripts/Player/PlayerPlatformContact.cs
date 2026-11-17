@@ -2,17 +2,20 @@ using UnityEngine;
 
 // Lets the player interact with special platforms they land on:
 // breaking platforms start to crumble, jump pads launch, moving platforms carry,
+// slippery platforms make you slide,
 // and the level goal opens the Level Complete menu.
 [RequireComponent(typeof(CharacterController))]
 public class PlayerPlatformContact : MonoBehaviour
 {
     private CharacterController controller;
+    private PlayerMovement movement;
     private MovingPlatform currentMover;
     private int lastMoverFrame = -1;
 
     void Start()
     {
         controller = GetComponent<CharacterController>();
+        movement = GetComponent<PlayerMovement>();
     }
 
     void OnControllerColliderHit(ControllerColliderHit hit)
@@ -25,6 +28,9 @@ public class PlayerPlatformContact : MonoBehaviour
 
         JumpPad pad = hit.collider.GetComponentInParent<JumpPad>();
         if (pad != null) pad.Launch(gameObject);
+
+        SlipperyPlatform slippery = hit.collider.GetComponentInParent<SlipperyPlatform>();
+        if (slippery != null && movement != null) movement.SetOnSlipperyGround(slippery.grip);
 
         LevelGoal goal = hit.collider.GetComponentInParent<LevelGoal>();
         if (goal != null) goal.Reach();

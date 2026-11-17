@@ -42,5 +42,9 @@ public class KillZone : MonoBehaviour
 
         PlayerMovement movement = controller.GetComponent<PlayerMovement>();
         if (movement != null) movement.Launch(0f);
+
+        // Coming back to a checkpoint gives a fresh breath of air
+        OxygenSupply oxygen = controller.GetComponent<OxygenSupply>();
+        if (oxygen != null) oxygen.Refill();
     }
 }

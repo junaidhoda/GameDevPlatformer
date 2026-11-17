@@ -5,7 +5,8 @@ using UnityEngine;
 // Builds Level 2 (Kelp Caves) and Level 3 (The Shipwreck) straight onto the
 // end of Level 1, so the player walks from one level into the next with no
 // loading screen. Each level starts with a gate and a banner (plus bonus time).
-// The Level Complete menu now only appears at the end of Level 3.
+// The Level Complete menu now only appears at the end of Level 3, and its
+// Continue button loads Level 4 (its own scene, see Level4Builder).
 //
 // Level 2 introduces jellyfish (time your jumps), chargers (dash to defeat)
 // and a lift. Level 3 adds spitters (dash to pop their bubbles), two moving
@@ -292,11 +293,12 @@ public static class Levels2And3Builder
 
         GameObject goal = Platform(finish, "Goal", 0f, 87.5f, 8f, 6f, 6f, goalMat);
         LevelGoal levelGoal = Undo.AddComponent<LevelGoal>(goal);
-        levelGoal.titleTop = "YOU";
-        levelGoal.titleBottom = "ESCAPED!";
-        levelGoal.description = "You made it out of the shipwreck with the treasure. Thanks for playing!";
-        levelGoal.continueLabel = "BACK TO MAIN MENU";
-        levelGoal.nextSceneName = "MainMenu";
+        // Level 4 (The Abyss) is its own scene - see Level4Builder
+        levelGoal.titleTop = "LEVEL 3";
+        levelGoal.titleBottom = "COMPLETE!";
+        levelGoal.description = "You made it out of the shipwreck with the treasure. Ready to dive into the abyss?";
+        levelGoal.continueLabel = "CONTINUE TO LEVEL 4";
+        levelGoal.nextSceneName = "Level4";
 
         Respawn(finish, "Respawn_Goal", 0f, 87.5f, 8f, 6f, 6f);
         Treasure(finish, 0f, 88.5f, 8f);
