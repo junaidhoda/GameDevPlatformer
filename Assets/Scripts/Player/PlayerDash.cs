@@ -9,8 +9,12 @@ public class PlayerDash : MonoBehaviour
 {
     [Header("Dash")]
     public float dashSpeed = 24f;
-    public float dashDuration = 0.25f;
-    public float dashCooldown = 0.8f;
+    [Tooltip("How far one dash goes")]
+    public float dashDistance = 7.5f;
+    [Tooltip("Seconds before you can dash again")]
+    public float rechargeTime = 0.6f;
+    [Tooltip("Pressing dash this long before it is ready still dashes when it is")]
+    public float dashBufferTime = 0.2f;
 
     [Header("Combat")]
     public float hitRadius = 1.3f;
@@ -22,6 +26,7 @@ public class PlayerDash : MonoBehaviour
     public bool IsDashing { get; private set; }
     public bool IsInvulnerable => IsDashing || Time.time < safeUntil;
     public float CooldownRemaining => Mathf.Max(0f, nextDashTime - Time.time);
+    public float CooldownLength => dashDistance / Mathf.Max(1f, dashSpeed) + rechargeTime;
 
     private CharacterController controller;
     private PlayerMovement movement;
@@ -35,6 +40,9 @@ public class PlayerDash : MonoBehaviour
     private float nextDashTime;
     private float safeUntil;
     private bool airDashUsed;
+    private bool airDash;
+    private float dashPressedTime = -999f;
+    private bool wasReady = true;
 
     void Start()
     {
@@ -75,10 +83,26 @@ public class PlayerDash : MonoBehaviour
             && Time.time >= nextDashTime
             && (Grounded || !airDashUsed);
 
-        if (canDash && DashPressed()) StartDash();
+        // Remember dash presses for a moment, so pressing slightly too early still works
+        if (DashPressed()) dashPressedTime = Time.time;
+        bool wantsDash = Time.time - dashPressedTime <= dashBufferTime;
+
+        if (canDash && wantsDash)
+        {
+            dashPressedTime = -999f;
+            StartDash();
+        }
+
+        // Quick flash on the diver when the dash is ready again
+        bool ready = Time.time >= nextDashTime && !IsDashing;
+        if (ready && !wasReady) DashKillable.Pop(transform.position, dashColour);
+        wasReady = ready;
 
         if (IsDashing)
         {
+            // An air dash goes straight across instead of dropping, so gaps are easier to judge
+            if (airDash && movement != null) movement.Launch(0f);
+
             controller.Move(dashDirection * dashSpeed * Time.deltaTime);
             DestroyThingsInPath();
 
@@ -90,10 +114,12 @@ public class PlayerDash : MonoBehaviour
     {
         IsDashing = true;
         dashDirection = lastMoveDirection.normalized;
-        dashEndTime = Time.time + dashDuration;
-        nextDashTime = Time.time + dashCooldown;
+        float duration = dashDistance / Mathf.Max(1f, dashSpeed);
+        dashEndTime = Time.time + duration;
+        nextDashTime = dashEndTime + rechargeTime;
+        airDash = !Grounded;
 
-        if (!Grounded)
+        if (airDash)
         {
             airDashUsed = true;
             // Stop falling for a moment so an air dash can cross gaps

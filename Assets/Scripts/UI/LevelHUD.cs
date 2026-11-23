@@ -57,11 +57,11 @@ public class LevelHUD : MonoBehaviour
     {
         if (dash == null) return;
 
-        float cooldown = Mathf.Max(0.01f, dash.dashCooldown);
+        float cooldown = Mathf.Max(0.01f, dash.CooldownLength);
         float ready = 1f - Mathf.Clamp01(dash.CooldownRemaining / cooldown);
         dashFill.rectTransform.anchorMax = new Vector2(ready, 1f);
         dashFill.color = ready >= 1f ? Cyan : new Color(Cyan.r, Cyan.g, Cyan.b, 0.45f);
-        dashLabel.text = ready >= 1f ? "DASH READY  (Q)" : "DASH";
+        dashLabel.text = ready >= 1f ? "DASH READY  (Q)     SPRINT  (SHIFT)" : "DASH     SPRINT  (SHIFT)";
     }
 
     public void SetLevelName(string text)
@@ -151,7 +151,7 @@ public class LevelHUD : MonoBehaviour
         dashFill.color = Cyan;
 
         dashLabel = AddText(meter.transform, "Label", "DASH", 20, Pale, FontStyles.Bold);
-        Place(dashLabel.rectTransform, new Vector2(0.5f, 1f), new Vector2(0f, 18f), new Vector2(300f, 30f));
+        Place(dashLabel.rectTransform, new Vector2(0.5f, 1f), new Vector2(0f, 18f), new Vector2(560f, 30f));
     }
 
     static TextMeshProUGUI AddText(Transform parent, string name, string text, float size, Color colour, FontStyles style)

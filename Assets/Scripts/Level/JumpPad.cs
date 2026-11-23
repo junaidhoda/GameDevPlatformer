@@ -24,6 +24,15 @@ public class JumpPad : MonoBehaviour
 
         // Small squash so it feels springy
         transform.localScale = new Vector3(normalScale.x, normalScale.y * 0.5f, normalScale.z);
+
+        // Rocket feel: a burst of bubbles under the player and a little camera shake
+        Vector3 feet = player.transform.position + Vector3.down * 0.9f;
+        DashKillable.Pop(feet, new Color(0.75f, 0.95f, 1f));
+        DashKillable.Pop(feet, new Color(0.3f, 0.9f, 0.35f));
+        CameraFollow.Shake(0.25f, 0.3f);
+
+        // Leave a short streak behind the player on the way up
+        RocketTrail.Begin(player, launchSpeed / 14f);
     }
 
     void Update()
