@@ -1,3 +1,37 @@
+# Underrun
+
+An underwater 3D platformer. Dive through four levels, collect the treasure and reach the end before the timer runs out.
+
+**Play in your browser:** https://junaidhoda.github.io/GameDevPlatformer/
+
+**Game Design Doc:** see [Game Design Doc.md](Game%20Design%20Doc.md)
+
+## How to Play
+
+| Key | Action |
+|---|---|
+| W A S D | Move |
+| Space | Jump (let go early for a smaller hop) |
+| Left Shift | Sprint |
+| Q or Right Click | Dash (works in the air too, defeats enemies you dash through) |
+| Esc or P | Pause |
+
+- Collect treasure to fill the counter at the top right. Treasure also heals you.
+- Don't fall: you go back to the last checkpoint you stood on.
+- Enemies and traps take away health. At 0 health, or when the timer runs out, it's game over.
+- Each new level gives you extra time.
+- In Level 4 your oxygen tank breaks: touch air bubbles to refill it.
+
+## Opening the Project
+
+- Unity version: 2023.1.22f1
+- Start from the **MainMenu** scene (Assets/Scenes/MainMenu.unity) and press Play.
+- Levels 1 to 3 are in **Main**, Level 4 is in **Level4**.
+
+---
+
+## Our Design Notes
+
 The game concept that we chose is Pathway 1: thrill seeker specifically concept 2
 
 Platformer
