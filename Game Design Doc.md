@@ -1,6 +1,7 @@
 # Game Design Doc: Underrun
 
 **Concept:** Pathway 1 (Thrill-Seekers), Concept 2: Platformer
+
 **Team:** Ronny Baroudi, Muzamil Humayun, Abdou Jobe, Junaid Hoda
 
 > "The player takes on the role of an underwater explorer in search for treasure in this first-person 3D platformer. They have to use platforms and underwater creatures to navigate the depths, avoid the obstacles and hazards, and find all of the hidden treasures. How fast can they complete the levels, and how far can they get?"
